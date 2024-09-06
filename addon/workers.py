@@ -6,7 +6,7 @@ from itertools import chain
 from .misc import ThreadPool
 from requests.adapters import HTTPAdapter
 from .constants import VERSION, VERSION_CHECK_API
-from PyQt5.QtCore import QObject, pyqtSignal, QThread
+from PyQt6.QtCore import QObject, pyqtSignal, QThread
 import aqt
 import os
 

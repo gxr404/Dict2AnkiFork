@@ -68,41 +68,63 @@ def getOrCreateModelCardTemplate(modelObject, cardTemplateName):
     if cardTemplateName in [t.get('name') for t in existingCardTemplate]:
         return
     cardTemplate = mw.col.models.newTemplate(cardTemplateName)
+    # 卡片正面
     cardTemplate['qfmt'] = '''
         <table>
             <tr>
-                <td><h1 class="term">{{term}}</h1><br><div> 英 [{{BrEPhonetic}}] 美 [{{AmEPhonetic}}]</div></div></td>
+                <td>
+                    <h1 class="term">{{term}}</h1><br>
+                    <div> 英 [{{BrEPhonetic}}] 美 [{{AmEPhonetic}}]</div>
+                </td>
                 <td><img {{image}} height="120px"></td>
             </tr>
         </table>
-        <hr>
-        释义：
-        <div>Tap to View</div>
-        <hr>
-        短语：
-        <table>{{phraseFront}}</table>
-        <hr>
-        例句：
-        <table>{{sentenceFront}}</table>
         {{BrEPron}}
         {{AmEPron}}
+        <hr>
+        <dl class="definition">
+            <dt>释义：</dt>
+            <dd>Tap to View</dd>
+        </dl>
+        <hr>
+        <dl class="dl">
+            <dt>短语：</dt>
+            <dd><table>{{phraseFront}}</table></dd>
+        </dl>
+        <hr>
+        <dl class="dl">
+            <dt>例句：</dt>
+            <dd><table>{{sentenceFront}}</table></dd>
+        </dl>
     '''
+    # 卡片背面
     cardTemplate['afmt'] = '''
         <table>
             <tr>
-                <td><h1 class="term">{{term}}</h1><br><div> 英 [{{BrEPhonetic}}] 美 [{{AmEPhonetic}}]</div></div></td>
+                <td>
+                    <h1 class="term">{{term}}</h1><br>
+                    <div> 英 [{{BrEPhonetic}}] 美 [{{AmEPhonetic}}]</div>
+                </td>
                 <td><img {{image}} height="120px"></td>
             </tr>
         </table>
+        {{BrEPron}}
+        {{AmEPron}}
         <hr>
-        释义：
-        <div>{{definition}}</div>
+        <dl class="definition">
+            <dt>释义：</dt>
+            {{definition}}
+        </dl>
         <hr>
-        短语：
-        <table>{{phraseBack}}</table>
+        <dl class="dl">
+            <dt>短语：</dt>
+            <dd><table>{{phraseBack}}</table></dd>
+        </dl>
         <hr>
-        例句：
-        <table>{{sentenceBack}}</table>
+        <dl class="dl">
+            <dt>例句：</dt>
+            <dd><table>{{sentenceBack}}</table></dd>
+        </dl>
     '''
     modelObject['css'] = '''
         .card {
@@ -114,6 +136,24 @@ def getOrCreateModelCardTemplate(modelObject, cardTemplateName):
         }
         .term {
             font-size : 35px;
+        }
+        .definition {
+            font-size :14px;
+        }
+        .definition dd {
+            margin: 10px 0 10px 20px;
+        }
+        .definition dt {
+            font-weight: bold;
+        }
+        .dl {
+            font-size: 14px;
+        }
+        .dl dd{
+            margin-left: 20px;
+        }
+        .dl dt {
+            font-weight: bold;
         }
     '''
     mw.col.models.addTemplate(modelObject, cardTemplate)
@@ -136,13 +176,13 @@ def addNoteToDeck(deckObject, modelObject, currentConfig: dict, oneQueryResult: 
                 newNote[f'{configName}Front'] = '\n'.join(
                     [f'<tr><td>{e.strip()}</td></tr>' for e, _ in oneQueryResult[configName]])
                 newNote[f'{configName}Back'] = '\n'.join(
-                    [f'<tr><td>{e.strip()}<br>{c.strip()}</td></tr>' for e, c in oneQueryResult[configName]])
+                    [f'<tr><td>{e.strip()}</td><td>{c.strip()}</td></tr>' for e, c in oneQueryResult[configName]])
             # 图片
             elif configName == 'image':
                 newNote[configName] = f'src="{oneQueryResult[configName]}"'
             # 释义
             elif configName == 'definition' and currentConfig[configName]:
-                newNote[configName] = ' '.join(oneQueryResult[configName])
+                newNote[configName] = '\n'.join([f'<dd>{item.strip()}</dd>' for item in oneQueryResult[configName]])
             # 发音
             elif configName in EXTRA_OPTION[:2]:
                 newNote[configName] = f"[sound:{configName}_{oneQueryResult['term']}.mp3]"

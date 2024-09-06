@@ -62,6 +62,14 @@ class Parser:
         except (TypeError, KeyError):
             pass
 
+        if pron['AmEPhonetic'] == None and pron['BrEPhonetic'] == None:
+            pron['AmEPhonetic'] = self._result['simple']['word'][0]['phone']
+            # pron['BrEPhonetic'] = self._result['simple']['word'][0]['phone']
+
+        if pron['AmEUrl'] == None and pron['BrEUrl'] == None:
+            pron['AmEUrl'] =  url + self._result['simple']['word'][0]['speech']
+            # pron['BrEUrl'] =  url + self._result['simple']['word'][0]['speech']
+
         return pron
 
     @property
@@ -133,7 +141,11 @@ class API(AbstractQueryAPI):
     session.mount('http://', HTTPAdapter(max_retries=retries))
     session.mount('https://', HTTPAdapter(max_retries=retries))
     url = 'https://dict.youdao.com/jsonapi'
-    params = {"dicts": {"count": 99, "dicts": [["ec", "ee", "phrs", "pic_dict"], ["web_trans"], ["fanyi"], ["blng_sents_part"]]}}
+    # url = 'https://dict.youdao.com/jsonapi_s'
+    # https://dict.youdao.com/jsonapi_s?doctype=json&jsonversion=4
+    # params = {"dicts": {"count": 99, "dicts": [["ec", "ee", "phrs", "pic_dict"], ["web_trans"], ["fanyi"], ["blng_sents_part"]]}}
+    # params = {"doctype": "json", "jsonversion": 4}
+    params={}
     parser = Parser
 
     @classmethod
