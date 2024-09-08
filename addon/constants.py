@@ -1,6 +1,8 @@
 VERSION = 'v6.1.6'
 RELEASE_URL = 'https://github.com/megachweng/Dict2Anki'
 VERSION_CHECK_API = 'https://api.github.com/repos/megachweng/Dict2Anki/releases/latest'
+# RELEASE_URL = 'https://github.com/gxr404/Dict2AnkiFork'
+# VERSION_CHECK_API = 'https://api.github.com/repos/gxr404/Dict2AnkiFork/releases/latest'
 MODEL_NAME = f'Dict2Anki-{VERSION}'
 
 BASIC_OPTION = ['definition', 'sentence', 'phrase', 'image', 'BrEPhonetic', 'AmEPhonetic']  # 顺序和名称不可修改

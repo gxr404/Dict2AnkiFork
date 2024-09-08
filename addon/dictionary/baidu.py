@@ -6,15 +6,18 @@ from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 from .abstract import AbstractDictionary
 
-logger = logging.getLogger('dict2Anki.dictionary.youdao')
+logger = logging.getLogger('dict2Anki.dictionary.baidu')
 
+# 获取收藏分组
+# https://fanyi.baidu.com/pccollgroup?req=list
+# https://fanyi.baidu.com/pcnewcollection?req=get
 
-class Youdao(AbstractDictionary):
-  name = '有道词典'
-  loginUrl = 'http://account.youdao.com/login?service=dict&back_url=http://dict.youdao.com/wordbook/wordlist%3Fkeyfrom%3Dnull'
+class Baidu(AbstractDictionary):
+  name = '百度翻译'
+  loginUrl = 'https://fanyi.baidu.com/mtpe-individual/collection'
   timeout = 10
   headers = {
-    'Host': 'dict.youdao.com',
+    'Host': 'fanyi.baidu.com',
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
   }
   retries = Retry(
@@ -37,15 +40,17 @@ class Youdao(AbstractDictionary):
     :return: bool
     """
     rsp = requests.get(
-      'http://dict.youdao.com/login/acc/query/accountinfo',
+      'https://fanyi.baidu.com/mtpe/v2/user/getInfo',
       cookies=cookie,
       headers=self.headers
     )
-    if rsp.json().get('code', None) == 0:
+    if rsp.json().get('errno', None) == 0:
       self.indexSoup = BeautifulSoup(rsp.text, features="html.parser")
       logger.info('Cookie有效')
       cookiesJar = requests.utils.cookiejar_from_dict(
-        cookie, cookiejar=None, overwrite=True
+        cookie,
+        cookiejar=None,
+        overwrite=True
       )
       self.session.cookies = cookiesJar
       return True
@@ -54,7 +59,7 @@ class Youdao(AbstractDictionary):
 
   @staticmethod
   def loginCheckCallbackFn(cookie, content):
-    if 'DICT_SESS' in cookie:
+    if 'BDUSS' in cookie and 'BDUSS_BFESS' in cookie:
       return True
     return False
 
@@ -64,10 +69,10 @@ class Youdao(AbstractDictionary):
     :return: [(group_name,group_id)]
     """
     r = self.session.get(
-      url='http://dict.youdao.com/wordbook/webapi/books',
+      url='https://fanyi.baidu.com/pccollgroup?req=list',
       timeout=self.timeout,
     )
-    groups = [(g['bookName'], g['bookId']) for g in r.json()['data']]
+    groups = [(g['name'], g['id'], g['type']) for g in r.json()['data']]
     logger.info(f'单词本分组:{groups}')
     self.groups = groups
 
@@ -80,14 +85,27 @@ class Youdao(AbstractDictionary):
     :param groupId:分组id
     :return:
     """
+
     try:
-      r = self.session.get(
-          url='http://dict.youdao.com/wordbook/webapi/words',
-          timeout=self.timeout,
-          params={'bookId': groupId, 'limit': 1, 'offset': 0}
+      r = self.session.post(
+        url='https://fanyi.baidu.com/pcnewcollection?req=get',
+        timeout=self.timeout,
+        data={
+          'currentTotal': 0,
+          'direction': 'all',
+          'dstStatus': 'all',
+          'gid': groupId,
+          'order': 'time',
+          'page': 1,
+          'pageSize': 10,
+          'scroll': False,
+          'total': 0
+        }
       )
-      totalWords = r.json()['data']['total']
-      totalPages = ceil(totalWords / 15)  # 这里按网页默认每页取15个
+      res = r.json()
+      totalWords = res['total']
+      # totalPages = res['totalpage']
+      totalPages = ceil(totalWords / 10)  # 这里按网页默认每页取10个
 
     except Exception as error:
       logger.exception(f'网络异常{error}')
@@ -104,15 +122,25 @@ class Youdao(AbstractDictionary):
     :param groupId: 分组id
     :return:
     """
+
     wordList = []
     try:
       logger.info(f'获取单词本(f{groupName}-{groupId})第:{pageNo}页')
-      r = self.session.get(
-        'http://dict.youdao.com/wordbook/webapi/words',
+      r = self.session.post(
+        'https://fanyi.baidu.com/pcnewcollection?req=get',
         timeout=self.timeout,
-        params={'bookId': groupId, 'limit': 15, 'offset': pageNo * 15}
+        data={
+          'currentTotal': 10,
+          'direction': 'all',
+          'dstStatus': 'all',
+          'gid': groupId,
+          'order': 'time',
+          'page': pageNo,
+          'pageSize': 10,
+          'scroll': False,
+        }
       )
-      wordList = [item['word'] for item in r.json()['data']['itemList']]
+      wordList = [item['fanyisrc'] for item in r.json()['pageinfo']]
     except Exception as e:
       logger.exception(f'网络异常{e}')
     finally:

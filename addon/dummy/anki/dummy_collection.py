@@ -1,7 +1,6 @@
-from test.dummy_anki.dummy_deck import Deck
-from test.dummy_anki.dummy_notes import Note
-from test.dummy_anki.dummy_models import Model
-
+from .dummy_deck import Deck
+from .dummy_notes import Note
+from .dummy_models import Model
 
 class Collection:
     decks = Deck

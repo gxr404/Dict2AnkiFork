@@ -1,6 +1,5 @@
-from test.dummy_aqt.dummy_addon import AddonManager
-from test.dummy_anki.dummy_collection import Collection
-
+from ..aqt.dummy_addon import AddonManager
+from ..anki.dummy_collection import Collection
 
 class mw:
     addonManager = AddonManager
