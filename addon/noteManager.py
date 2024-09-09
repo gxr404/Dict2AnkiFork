@@ -188,9 +188,9 @@ def addNoteToDeck(deckObject, modelObject, currentConfig: dict, oneQueryResult: 
       elif configName == EXTRA_OPTION[3]:
         newNote[EXTRA_OPTION[0]] = f"[sound:{EXTRA_OPTION[0]}_{oneQueryResult['term']}.mp3]"
         newNote[EXTRA_OPTION[1]] = f"[sound:{EXTRA_OPTION[1]}_{oneQueryResult['term']}.mp3]"
-      elif configName == EXTRA_OPTION[0]:
+      elif configName == EXTRA_OPTION[0] and currentConfig[configName]:
         newNote[configName] = f"[sound:{configName}_{oneQueryResult['term']}.mp3]"
-      elif configName == EXTRA_OPTION[1]:
+      elif configName == EXTRA_OPTION[1] and currentConfig[configName]:
         newNote[configName] = f"[sound:{configName}_{oneQueryResult['term']}.mp3]"
       # 其他
       elif currentConfig[configName]:
