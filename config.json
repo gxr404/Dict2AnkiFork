@@ -23,5 +23,6 @@
   "BrEPhonetic": true,
   "BrEPron": false,
   "AmEPron": false,
-  "noPron": true
+  "noPron": false,
+  "allPron": true
 }
