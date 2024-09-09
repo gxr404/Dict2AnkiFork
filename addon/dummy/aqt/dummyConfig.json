@@ -1,1 +1,22 @@
-{}
+{
+  "credential": [
+    {
+      "cookie": "",
+      "username": "",
+      "password": ""
+    }
+  ],
+  "deck": "",
+  "selectedDict": 0,
+  "selectedApi": 0,
+  "definition": true,
+  "image": true,
+  "sentence": true,
+  "phrase": true,
+  "AmEPhonetic": true,
+  "BrEPhonetic": true,
+  "BrEPron": true,
+  "AmEPron": true,
+  "noPron": false,
+  "selectedGroup": []
+}
