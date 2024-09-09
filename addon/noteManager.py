@@ -170,7 +170,7 @@ def addNoteToDeck(deckObject, modelObject, currentConfig: dict, oneQueryResult: 
   newNote = anki.notes.Note(mw.col, modelObject)
   newNote['term'] = oneQueryResult['term']
   for configName in BASIC_OPTION + EXTRA_OPTION:
-    logger.debug(f'字段:{configName}--结果:{oneQueryResult.get(configName)}')
+    logger.info(f'字段:{configName}--结果:{oneQueryResult.get(configName)}')
     if oneQueryResult.get(configName):
       # 短语例句
       if configName in ['sentence', 'phrase'] and currentConfig[configName]:
