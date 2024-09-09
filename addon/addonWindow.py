@@ -143,6 +143,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     self.BrEPronRadioButton.setChecked(config['BrEPron'])
     self.AmEPronRadioButton.setChecked(config['AmEPron'])
     self.noPronRadioButton.setChecked(config['noPron'])
+    self.allPronRadioButton.setChecked(config['allPron'])
     self.selectedGroups = config['selectedGroup']
 
   def checkUpdate(self):
@@ -249,6 +250,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
       BrEPron=self.BrEPronRadioButton.isChecked(),
       AmEPron=self.AmEPronRadioButton.isChecked(),
       noPron=self.noPronRadioButton.isChecked(),
+      allPron=self.allPronRadioButton.isChecked()
     )
     logger.info(f'当前设置:{currentConfig}')
     self._saveConfig(currentConfig)
@@ -476,8 +478,12 @@ class Windows(QDialog, mainUI.Ui_Dialog):
       if wordItemData:
         addNoteToDeck(deck, model, currentConfig, wordItemData)
         added += 1
-        # 添加发音任务
-        if whichPron and wordItemData.get(whichPron):
+        if currentConfig['allPron']:
+          # 添加发音任务
+          audiosDownloadTasks.append((f"{'AmEPron'}_{wordItemData['term']}.mp3", wordItemData['AmEPron']))
+          audiosDownloadTasks.append((f"{'BrEPron'}_{wordItemData['term']}.mp3", wordItemData['BrEPron']))
+        elif whichPron and wordItemData.get(whichPron):
+          # 添加发音任务
           audiosDownloadTasks.append((f"{whichPron}_{wordItemData['term']}.mp3", wordItemData[whichPron]))
     mw.reset()
 

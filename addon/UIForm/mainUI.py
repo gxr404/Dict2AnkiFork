@@ -156,6 +156,12 @@ class Ui_Dialog(object):
         self.noPronRadioButton.setChecked(True)
         self.noPronRadioButton.setObjectName("noPronRadioButton")
         self.gridLayout.addWidget(self.noPronRadioButton, 5, 2, 1, 1)
+
+        self.allPronRadioButton = QtWidgets.QRadioButton(self.defaultConfigGroupBox)
+        self.allPronRadioButton.setChecked(True)
+        self.allPronRadioButton.setObjectName("allPronRadioButton")
+        self.gridLayout.addWidget(self.allPronRadioButton, 6, 0, 1, 1)
+
         self.phraseCheckBox = QtWidgets.QCheckBox(self.defaultConfigGroupBox)
         self.phraseCheckBox.setChecked(True)
         self.phraseCheckBox.setObjectName("phraseCheckBox")
@@ -261,6 +267,7 @@ class Ui_Dialog(object):
         self.defaultConfigGroupBox.setTitle(_translate("Dialog", "默认设置"))
         self.sentenceCheckBox.setText(_translate("Dialog", "例句"))
         self.definitionCheckBox.setText(_translate("Dialog", "释义"))
+        self.allPronRadioButton.setText(_translate("Dialog", "所有发音"))
         self.noPronRadioButton.setText(_translate("Dialog", "无发音"))
         self.phraseCheckBox.setText(_translate("Dialog", "短语"))
         self.BrEPronRadioButton.setText(_translate("Dialog", "英式发音"))

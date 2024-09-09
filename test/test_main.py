@@ -35,7 +35,8 @@ def fresh_config():
     "BrEPhonetic": true,
     "BrEPron": false,
     "AmEPron": true,
-    "noPron": false
+    "noPron": false,
+    "allPron": false
   }''')
 
 
