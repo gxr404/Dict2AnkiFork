@@ -50,8 +50,8 @@ def test_eudict_epitomize():
   # 不包含图片，定义不在正常规则内
   res = api.query('epitomize')
   ret = get_missing_filed_set(res)
-  # print(ret)
-  expect = {'image', 'phrase', 'sentence'}
+  # print(res)
+  expect = {'image', 'phrase'}
   # TODO
   # expect = {'image', 'phrase'}
   assert ret == expect
