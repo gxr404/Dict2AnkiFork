@@ -1,6 +1,6 @@
 # Dict2AnkiFork
 
-Fork自原项目[Dict2AnkiFork](https://github.com/megachweng/Dict2Anki), 由于已经不维护了无人修bug
+Fork自原项目[Dict2Anki](https://github.com/megachweng/Dict2Anki), 由于已经不维护了无人修bug
 
 
 [原README.md](./OLD_README.md)文档
@@ -8,10 +8,10 @@ Fork自原项目[Dict2AnkiFork](https://github.com/megachweng/Dict2Anki), 由于
 
 ## 改动
 
-- 升级至Qt6，使其能支持最新版的anki
-- 添加获取单词源 “百度翻译”
-- 添加单词查询和音频下载源 “剑桥词典”
-- 添加配置可下载所有发音
+- 🛠️ 升级至Qt6，使其能支持最新版的anki
+- 💪 添加获取单词源 “百度翻译”
+- 💪 添加单词查询和音频下载源 “剑桥词典”
+- 💪 添加配置可下载所有发音
 
 ## 使用
 
