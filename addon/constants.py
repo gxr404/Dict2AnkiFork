@@ -1,7 +1,7 @@
 VERSION = 'v0.0.2'
 RELEASE_URL = 'https://github.com/gxr404/Dict2AnkiFork'
 VERSION_CHECK_API = 'https://api.github.com/repos/gxr404/Dict2AnkiFork/releases/latest'
-MODEL_NAME = f'Dict2Anki-{VERSION}'
+MODEL_NAME = f'Dict2AnkiFork-{VERSION}'
 
 BASIC_OPTION = ['definition', 'sentence', 'phrase', 'image', 'BrEPhonetic', 'AmEPhonetic']  # 顺序和名称不可修改
 EXTRA_OPTION = ['BrEPron', 'AmEPron', 'noPron', 'allPron']  # 顺序和名称不可修改
