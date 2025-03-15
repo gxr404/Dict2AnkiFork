@@ -15,7 +15,11 @@ Fork自原项目[Dict2Anki](https://github.com/megachweng/Dict2Anki), 由于已�
 
 ## 使用
 
-由于没发布到anki官方插件，使用的话则下载到 用户anki插件目录即可
+两种方式:
+
+- 通过[ankiweb](https://ankiweb.net/shared/info/456732182)安装, 插件代码`456732182`
+
+- 直接`git clone`下载到 用户anki插件目录即可
 
 ```bash
 git clone git@github.com:gxr404/Dict2AnkiFork.git /Users/xxxx/Library/Application\ Support/Anki2/addons21/Dict2AnkiFork

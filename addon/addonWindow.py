@@ -478,13 +478,14 @@ class Windows(QDialog, mainUI.Ui_Dialog):
       if wordItemData:
         addNoteToDeck(deck, model, currentConfig, wordItemData)
         added += 1
+        print(currentConfig)
         if currentConfig['allPron']:
           # 添加发音任务
-          audiosDownloadTasks.append((f"{'AmEPron'}_{wordItemData['term']}.mp3", wordItemData['AmEPron']))
-          audiosDownloadTasks.append((f"{'BrEPron'}_{wordItemData['term']}.mp3", wordItemData['BrEPron']))
+          audiosDownloadTasks.append((f"{'AmEPron'}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3", wordItemData['AmEPron']))
+          audiosDownloadTasks.append((f"{'BrEPron'}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3", wordItemData['BrEPron']))
         elif whichPron and wordItemData.get(whichPron):
           # 添加发音任务
-          audiosDownloadTasks.append((f"{whichPron}_{wordItemData['term']}.mp3", wordItemData[whichPron]))
+          audiosDownloadTasks.append((f"{whichPron}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3", wordItemData[whichPron]))
     mw.reset()
 
     logger.info(f'发音下载任务:{audiosDownloadTasks}')

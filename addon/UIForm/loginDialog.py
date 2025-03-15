@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_LoginDialog(object):
     def setupUi(self, LoginDialog):
         LoginDialog.setObjectName("LoginDialog")
-        LoginDialog.resize(505, 480)
+        LoginDialog.resize(900, 600)
         self.gridLayout = QtWidgets.QGridLayout(LoginDialog)
         self.gridLayout.setObjectName("gridLayout")
         self.reloadBtn = QtWidgets.QPushButton(LoginDialog)
