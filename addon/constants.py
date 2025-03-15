@@ -1,5 +1,5 @@
-VERSION = 'v0.0.2'
-RELEASE_URL = 'https://github.com/gxr404/Dict2AnkiFork'
+VERSION = 'v0.0.3'
+RELEASE_URL = 'https://github.com/gxr404/Dict2AnkiFork/releases'
 VERSION_CHECK_API = 'https://api.github.com/repos/gxr404/Dict2AnkiFork/releases/latest'
 MODEL_NAME = f'Dict2AnkiFork-{VERSION}'
 
