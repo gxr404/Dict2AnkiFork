@@ -481,11 +481,20 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         print(currentConfig)
         if currentConfig['allPron']:
           # 添加发音任务
-          audiosDownloadTasks.append((f"{'AmEPron'}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3", wordItemData['AmEPron']))
-          audiosDownloadTasks.append((f"{'BrEPron'}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3", wordItemData['BrEPron']))
+          if wordItemData['AmEPron']:
+            audiosDownloadTasks.append((f"{'AmEPron'}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3", wordItemData['AmEPron']))
+          else:
+            logger.info(f"{'AmEPron'}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3 没查询到语音")
+          if wordItemData['BrEPron']:
+            audiosDownloadTasks.append((f"{'BrEPron'}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3", wordItemData['BrEPron']))
+          else:
+            logger.info(f"{'BrEPron'}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3 没查询到语音")
         elif whichPron and wordItemData.get(whichPron):
           # 添加发音任务
-          audiosDownloadTasks.append((f"{whichPron}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3", wordItemData[whichPron]))
+          if wordItemData[whichPron]:
+            audiosDownloadTasks.append((f"{whichPron}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3", wordItemData[whichPron]))
+          else:
+            logger.info(f"{whichPron}_{wordItemData['term']}_{currentConfig['selectedApi']}.mp3 没查询到语音")
     mw.reset()
 
     logger.info(f'发音下载任务:{audiosDownloadTasks}')
@@ -501,7 +510,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
       self.audioDownloadThread = QThread(self)
       self.audioDownloadThread.start()
-      self.audioDownloadWorker = AudioDownloadWorker(audiosDownloadTasks)
+      self.audioDownloadWorker = AudioDownloadWorker(audiosDownloadTasks, self.currentConfig['selectedDict'])
       self.audioDownloadWorker.moveToThread(self.audioDownloadThread)
       self.audioDownloadWorker.tick.connect(lambda: self.progressBar.setValue(self.progressBar.value() + 1))
       self.audioDownloadWorker.start.connect(self.audioDownloadWorker.run)

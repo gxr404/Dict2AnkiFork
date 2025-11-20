@@ -2,7 +2,9 @@ import os
 import tempfile
 import json
 import logging
+import time
 import requests
+import random
 from urllib3 import Retry
 from itertools import chain
 from .misc import ThreadPool
@@ -140,9 +142,10 @@ class AudioDownloadWorker(QObject):
   session.mount('http://', HTTPAdapter(max_retries=retries))
   session.mount('https://', HTTPAdapter(max_retries=retries))
 
-  def __init__(self, audios: [tuple]):
+  def __init__(self, audios: [tuple], selectedDict):
     super().__init__()
     self.audios = audios
+    self.selectedDict = selectedDict
 
   def run(self):
     currentThread = QThread.currentThread()
@@ -154,9 +157,12 @@ class AudioDownloadWorker(QObject):
         if currentThread.isInterruptionRequested():
           return
         r = self.session.get(url, headers= {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+          'User-Agent': f'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36 {random.sample(range(100), 16)}'
         }, stream=True)
         self.logger.info(f"音频下载状态码: {r.status_code}")
+        if r.status_code != 200:
+          self.logger.info(f"❌ 音频下载异常, 状态码非200: {url} ——> {r.status_code}")
+          return
         with open(fileName, 'wb') as f:
           for chunk in r.iter_content(chunk_size=1024):
             if chunk:
@@ -170,7 +176,17 @@ class AudioDownloadWorker(QObject):
       finally:
         self.tick.emit()
 
-    with ThreadPool(max_workers=3) as executor:
+    maxWorkers = 3
+    isSleep = False
+    # 剑桥词典频繁请求会 429
+    if self.selectedDict == 2:
+      maxWorkers = 1
+      isSleep = True
+
+    with ThreadPool(max_workers=maxWorkers) as executor:
       for fileName, url in self.audios:
         executor.submit(__download, fileName, url)
+        if isSleep:
+          time.sleep(0.8)
+
     self.done.emit()
