@@ -4,6 +4,7 @@ from urllib3 import Retry
 from requests.adapters import HTTPAdapter
 from .abstract import AbstractQueryAPI
 from bs4 import BeautifulSoup
+from .youdao import API as youdaoAPI
 
 logger = logging.getLogger('dict2Anki.queryApi.cambridge')
 __all__ = ['API']
@@ -68,16 +69,39 @@ class Parser:
     """发音"""
     url = 'https://api.frdic.com/api/v2/speech/speakweb?'
     pron = {
+      # 音标
       'AmEPhonetic': None,
+      # 音频url
       'AmEUrl': None,
+      # 音标
       'BrEPhonetic': None,
       'BrEUrl': None
     }
     els = self._soap.select('.pr.entry-body__el')
 
+
+    def fallbackPlan():
+      # 如果以下字段不存在 改用 有道api查找
+      required_keys = ['AmEUrl', 'BrEUrl', 'BrEPhonetic', 'AmEPhonetic']
+      # 是否有任何一个字段是 None
+      if any(pron[k] is None for k in required_keys):
+        youdaoParserRes = youdaoAPI.query(self.term)
+        if youdaoParserRes is None:
+          return
+        # 自动把 None 的字段补上，不用重复写四次 if
+        for k in required_keys:
+          if pron[k] is None:
+            if k == 'AmEUrl':
+              pron[k] = youdaoParserRes['AmEPron']
+            elif k == 'BrEUrl':
+              pron[k] = youdaoParserRes['BrEPron']
+            else:
+              pron[k] = youdaoParserRes[k]
+
     # pron dpron
     # els = self._soap.select('.phonitic-line')
     if not els:
+      fallbackPlan()
       return pron
 
     el = els[0]
@@ -105,6 +129,8 @@ class Parser:
       pron['AmEUrl'] = "https://dictionary.cambridge.org{}".format(url)
     except (TypeError, KeyError, IndexError):
       pass
+
+    fallbackPlan()
 
     return pron
 

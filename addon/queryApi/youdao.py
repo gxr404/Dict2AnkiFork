@@ -66,11 +66,17 @@ class Parser:
       pass
 
     if pron['AmEPhonetic'] == None and pron['BrEPhonetic'] == None:
-      pron['AmEPhonetic'] = self._result['simple']['word'][0]['phone']
+      try:
+        pron['AmEPhonetic'] = self._result['simple']['word'][0]['phone']
+      except (KeyError, IndexError, TypeError):
+        pron['AmEPhonetic'] = None
       # pron['BrEPhonetic'] = self._result['simple']['word'][0]['phone']
 
     if pron['AmEUrl'] == None and pron['BrEUrl'] == None:
-      pron['AmEUrl'] = url + self._result['simple']['word'][0]['speech']
+      try:
+        pron['AmEUrl'] = url + self._result['simple']['word'][0]['speech']
+      except (KeyError, IndexError, TypeError):
+        pron['AmEUrl'] = None
       # pron['BrEUrl'] =  url + self._result['simple']['word'][0]['speech']
 
     return pron
