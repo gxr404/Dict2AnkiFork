@@ -140,7 +140,7 @@ class Baidu(AbstractDictionary):
           'scroll': False,
         }
       )
-      wordList = [item['fanyisrc'] for item in r.json()['pageinfo']]
+      wordList = [item['fanyisrc'].strip() for item in r.json()['pageinfo']]
     except Exception as e:
       logger.exception(f'网络异常{e}')
     finally:
