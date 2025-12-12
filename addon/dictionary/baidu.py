@@ -124,6 +124,7 @@ class Baidu(AbstractDictionary):
     """
 
     wordList = []
+    pageNo = pageNo + 1
     try:
       logger.info(f'获取单词本(f{groupName}-{groupId})第:{pageNo}页')
       r = self.session.post(

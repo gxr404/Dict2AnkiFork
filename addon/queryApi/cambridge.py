@@ -23,6 +23,17 @@ class Parser:
       return url
 
   @property
+  def term_site(self) -> str:
+    """单词"""
+    ret = ""
+    els = self._soap.select('.pos-header .di-title .headword span')
+    if not els:
+      return ret
+    ret = els[0].get_text(strip=True).strip()
+    return ret
+
+
+  @property
   def definition(self) -> list:
     """定义"""
     ret = []
@@ -230,7 +241,14 @@ class API(AbstractQueryAPI):
     try:
       rsp = cls.session.get(cls.url.format(word), headers=cls.headers, timeout=cls.timeout)
       logger.debug(f'code:{rsp.status_code}- word:{word} text:{rsp.text[:100]}')
-      queryResult = cls.parser(rsp.text, word).result
+      cambridgeParser = cls.parser(rsp.text, word)
+      queryResult = cambridgeParser.result
+      # 剑桥英语显示的单词与 需要查询的单词不一致时 回退为有道
+
+      if word.lower() != cambridgeParser.term_site.lower():
+        logger.info("出现\"剑桥词典显示的单词\"与\"需要查询的单词\"不一致的情况！！剑桥显示的是: %s,需要查询的是: %s", cambridgeParser.term_site, word)
+        youdaoParserRes = youdaoAPI.query(word)
+        queryResult = youdaoParserRes
     except Exception as e:
       logger.exception(e)
     finally:
