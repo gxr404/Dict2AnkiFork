@@ -5,7 +5,7 @@ from math import ceil
 from bs4 import BeautifulSoup
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
-from .abstract import AbstractDictionary
+from .abstract import AbstractDictionary, Word
 
 logger = logging.getLogger("dict2Anki.dictionary.eudict")
 
@@ -53,7 +53,7 @@ class Eudict(AbstractDictionary):
       return True
     return False
 
-  def getGroups(self) -> [(str, int)]:
+  def getGroups(self) -> list[tuple[str, int]]:
     """
     获取单词本分组
     :return: [(group_name,group_id)]
@@ -89,8 +89,8 @@ class Eudict(AbstractDictionary):
       logger.exception(f"网络异常{error}")
       return 0
 
-  def getWordsByPage(self, pageNo: int, groupName: str, groupId: int) -> [str]:
-    wordList = []
+  def getWordsByPage(self, pageNo: int, groupName: str, groupId: int) -> list[Word]:
+    wordList:list[Word] = []
     data = {
       "columns[2][data]": "word",
       "start": pageNo * 100,
@@ -106,7 +106,10 @@ class Eudict(AbstractDictionary):
           data=data,
       )
       wl = r.json()
-      wordList = list(set(word["uuid"] for word in wl["data"]))
+      wordList = [
+          {"word": word["uuid"]}
+          for word in wl["data"]
+      ]
     except Exception as error:
       logger.exception(f"网络异常{error}")
     finally:

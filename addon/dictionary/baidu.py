@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
-from .abstract import AbstractDictionary
+from .abstract import AbstractDictionary, Word
 
 logger = logging.getLogger('dict2Anki.dictionary.baidu')
 
@@ -63,7 +63,7 @@ class Baidu(AbstractDictionary):
       return True
     return False
 
-  def getGroups(self) -> [(str, int)]:
+  def getGroups(self) -> list[tuple[str, int]]:
     """
     获取单词本分组
     :return: [(group_name,group_id)]
@@ -109,12 +109,12 @@ class Baidu(AbstractDictionary):
 
     except Exception as error:
       logger.exception(f'网络异常{error}')
-
+      return 0
     else:
       logger.info(f'该分组({groupName}-{groupId})下共有{totalPages}页')
       return totalPages
 
-  def getWordsByPage(self, pageNo: int, groupName: str, groupId: str) -> [str]:
+  def getWordsByPage(self, pageNo: int, groupName: str, groupId: str) -> list[Word]:
     """
     获取分组下每一页的单词
     :param pageNo: 页数
@@ -123,7 +123,7 @@ class Baidu(AbstractDictionary):
     :return:
     """
 
-    wordList = []
+    wordList: list[Word] = []
     pageNo = pageNo + 1
     try:
       logger.info(f'获取单词本(f{groupName}-{groupId})第:{pageNo}页')
@@ -141,7 +141,13 @@ class Baidu(AbstractDictionary):
           'scroll': False,
         }
       )
-      wordList = [item['fanyisrc'].strip() for item in r.json()['pageinfo']]
+      wordList = [
+        {
+          "word": item['fanyisrc'].strip(),
+          "note": item.get('note', '').strip().replace("\r\n", "<br/>").replace("\n", "<br/>")
+        }
+        for item in r.json()['pageinfo']
+      ]
     except Exception as e:
       logger.exception(f'网络异常{e}')
     finally:

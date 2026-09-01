@@ -6,4 +6,4 @@ MODEL_NAME = f'Dict2AnkiFork-{VERSION}'
 BASIC_OPTION = ['definition', 'sentence', 'phrase', 'image', 'BrEPhonetic', 'AmEPhonetic']  # 顺序和名称不可修改
 EXTRA_OPTION = ['BrEPron', 'AmEPron', 'noPron', 'allPron']  # 顺序和名称不可修改
 
-MODEL_FIELDS = ['term', 'definition', 'sentenceFront', 'sentenceBack', 'phraseFront', 'phraseBack', 'image', 'BrEPhonetic', 'AmEPhonetic', 'BrEPron', 'AmEPron']  # 名称不可修改
+MODEL_FIELDS = ['term', 'definition', 'sentenceFront', 'sentenceBack', 'phraseFront', 'phraseBack', 'image', 'BrEPhonetic', 'AmEPhonetic', 'BrEPron', 'AmEPron', 'note']  # 名称不可修改

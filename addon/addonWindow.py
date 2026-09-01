@@ -2,12 +2,13 @@ import os
 import sys
 import logging
 import json
+import PyQt6
 from copy import deepcopy
 from tempfile import gettempdir
 
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QPlainTextEdit, QDialog, QListWidgetItem, QVBoxLayout, QPushButton
-from PyQt6.QtCore import pyqtSlot, QThread, Qt
+from PyQt6.QtCore import pyqtSlot, QThread, Qt, QT_VERSION_STR, PYQT_VERSION_STR
 
 from .queryApi import apis
 from .UIForm import wordGroup, mainUI, icons_rc
@@ -43,6 +44,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     self.currentConfig = dict()
     self.localWords = []
     self.selectedGroups = []
+    self.wordDictList = []
 
     self.workerThread = QThread(self)
     self.workerThread.start()
@@ -62,6 +64,11 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     self.initCore()
     self.checkUpdate()
     # self.__dev() # 以备调试时使用
+
+    print("Python:", sys.version)
+    print("PyQt:", PyQt6.__file__)
+    print("Qt:", QT_VERSION_STR)
+    print("PyQt:", PYQT_VERSION_STR)
 
   def __dev(self):
     def on_dev():
@@ -278,7 +285,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     logger.info(f'保存配置项:{maskedConfig}')
     mw.addonManager.writeConfig(__name__, _config)
 
-  def getRemoteWordList(self, selected_groups: [str]):
+  def getRemoteWordList(self, selected_groups: list[str]):
     """根据选中到分组获取分组下到全部单词，并添加到 newWordListWidget"""
     # group_map = dict(self.selectedDict.groups)
     group_map = dict((key, value) for key, value, *_ in self.selectedDict.groups)
@@ -297,9 +304,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
   @pyqtSlot(list)
   def insertWordToListWidget(self, words: list):
     """一个分组获取完毕事件"""
-    for word in words:
-      wordItem = QListWidgetItem(word, self.newWordListWidget)
+    for wordDict in words:
+      wordItem = QListWidgetItem(wordDict['word'], self.newWordListWidget)
       wordItem.setData(Qt.ItemDataRole.UserRole, None)
+    self.wordDictList = words
     self.newWordListWidget.clearSelection()
 
   @pyqtSlot(int)
@@ -475,7 +483,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     for row in range(newWordCount):
       wordItem = self.newWordListWidget.item(row)
       wordItemData = wordItem.data(Qt.ItemDataRole.UserRole)
+      # 字典查询时的数据 可能存在笔记(如百度里的笔记)
       if wordItemData:
+        word = wordItemData['term']
+        wordItemData["note"] = next((item["note"] for item in self.wordDictList if item["word"] == word), "")
         addNoteToDeck(deck, model, currentConfig, wordItemData)
         added += 1
         print(currentConfig)
@@ -514,7 +525,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
       self.audioDownloadWorker.moveToThread(self.audioDownloadThread)
       self.audioDownloadWorker.tick.connect(lambda: self.progressBar.setValue(self.progressBar.value() + 1))
       self.audioDownloadWorker.start.connect(self.audioDownloadWorker.run)
-      self.audioDownloadWorker.done.connect(lambda: tooltip(f'发音下载完成'))
+      self.audioDownloadWorker.done.connect(lambda: tooltip('发音下载完成'))
       self.audioDownloadWorker.done.connect(self.audioDownloadThread.quit)
       self.audioDownloadWorker.start.emit()
 

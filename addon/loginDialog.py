@@ -1,5 +1,4 @@
 import json
-import sys
 import logging
 from PyQt6.QtCore import QUrl, pyqtSignal
 from .UIForm import loginDialog
@@ -40,9 +39,9 @@ class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
       logger.debug(f'Cookie:{self.page.cookie}')
       logger.debug(f'Content{content}')
       if self.loginCheckCallbackFn(cookie=self.page.cookie, content=content):
-        logger.info(f'Login Success!')
+        logger.info('Login Success!')
         self.onLoginSucceed()
-      logger.info(f'Login Fail!')
+      logger.info('Login Fail!')
 
 
     self.page.page().toHtml(contentLoaded)
@@ -59,6 +58,7 @@ class LoginWebEngineView(QWebEngineView):
     super().__init__(*args, **kwargs)
     # 绑定cookie被添加的信号槽
     self.profile = QWebEngineProfile.defaultProfile()
+    # self.profile = QWebEngineProfile("LoginProfile", self)
     self.profile.setHttpUserAgent(
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko)'
       ' Chrome/69.0.3497.100 Safari/537.36'

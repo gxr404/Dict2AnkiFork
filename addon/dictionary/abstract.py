@@ -1,4 +1,10 @@
 from abc import ABC, abstractmethod
+from typing import TypedDict
+from typing_extensions import NotRequired
+
+class Word(TypedDict):
+  word: str
+  note: NotRequired[str]
 
 class AbstractDictionary(ABC):
   @staticmethod
@@ -19,5 +25,5 @@ class AbstractDictionary(ABC):
     pass
 
   @abstractmethod
-  def getWordsByPage(self, pageNo: int, groupName: str, groupId: str) -> [str]:
+  def getWordsByPage(self, pageNo: int, groupName: str, groupId: str) -> list[Word]:
     pass

@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
-from .abstract import AbstractDictionary
+from .abstract import AbstractDictionary, Word
 
 logger = logging.getLogger('dict2Anki.dictionary.youdao')
 
@@ -96,7 +96,7 @@ class Youdao(AbstractDictionary):
       logger.info(f'该分组({groupName}-{groupId})下共有{totalPages}页')
       return totalPages
 
-  def getWordsByPage(self, pageNo: int, groupName: str, groupId: str) -> [str]:
+  def getWordsByPage(self, pageNo: int, groupName: str, groupId: str) -> list[Word]:
     """
     获取分组下每一页的单词
     :param pageNo: 页数
@@ -104,7 +104,7 @@ class Youdao(AbstractDictionary):
     :param groupId: 分组id
     :return:
     """
-    wordList = []
+    wordList: list[Word]  = []
     try:
       logger.info(f'获取单词本(f{groupName}-{groupId})第:{pageNo}页')
       r = self.session.get(
@@ -112,7 +112,10 @@ class Youdao(AbstractDictionary):
         timeout=self.timeout,
         params={'bookId': groupId, 'limit': 15, 'offset': pageNo * 15}
       )
-      wordList = [item['word'] for item in r.json()['data']['itemList']]
+      wordList: list[Word] = [
+        {"word": item["word"]}
+        for item in r.json()["data"]["itemList"]
+      ]
     except Exception as e:
       logger.exception(f'网络异常{e}')
     finally:

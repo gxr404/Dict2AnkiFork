@@ -97,6 +97,11 @@ def getOrCreateModelCardTemplate(modelObject, cardTemplateName):
       <dt>例句：</dt>
       <dd><table>{{sentenceFront}}</table></dd>
     </dl>
+    <hr>
+    <dl class="dl">
+      <dt>笔记：</dt>
+      <dd></dd>
+    </dl>
   '''
   # 卡片背面
   cardTemplate['afmt'] = '''
@@ -125,6 +130,11 @@ def getOrCreateModelCardTemplate(modelObject, cardTemplateName):
     <dl class="dl">
       <dt>例句：</dt>
       <dd><table>{{sentenceBack}}</table></dd>
+    </dl>
+    <hr>
+    <dl class="dl">
+      <dt>笔记：</dt>
+      <dd><table>{{note}}</table></dd>
     </dl>
   '''
   modelObject['css'] = '''
@@ -169,6 +179,7 @@ def addNoteToDeck(deckObject, modelObject, currentConfig: dict, oneQueryResult: 
 
   newNote = anki.notes.Note(mw.col, modelObject)
   newNote['term'] = oneQueryResult['term']
+  newNote['note'] = oneQueryResult['note']
   for configName in BASIC_OPTION + EXTRA_OPTION:
     logger.info(f'字段:{configName}--结果:{oneQueryResult.get(configName)}')
     if oneQueryResult.get(configName):
